@@ -1,12 +1,25 @@
+/*
+ *  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.wso2.tooling.connector.dynamic.schema.salesforcesoap;
 
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
@@ -42,32 +55,24 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 public class GenerateInputSchemaForQueryOperation extends Dialog {
 
 	private Group grpPropertyKey;
-	private String value;
 	private Label lblConnectorSalesforceLoginUserName;
 	private Label lblConnectorLoginSalesforcePassword;
 	private Label lblConnectorLoginSalesforceSecurityToken;
 	private Label lblConnectorLoginSalesforceLoginURL;
 	private Label lblSObject;
 	private Label lblQuery;
-	private Text connectorLoginSalesforceUserNameTextField;
-	private Text connectorLoginSalesforcePasswordTextField;
-	private Text connectorLoginSalesforceSecurityTokenTextField;
-	private Text connectorLoginSalesforceLoginURLTextField;
+	private static Text connectorLoginSalesforceUserNameTextField;
+	private static Text connectorLoginSalesforcePasswordTextField;
+	private static Text connectorLoginSalesforceSecurityTokenTextField;
+	private static Text connectorLoginSalesforceLoginURLTextField;
 	private Text queryTextField;
 	private Button login;
 	private static Combo cmbSObjectType;
-	private static String serverUrl;
-	private static String sessionId;
-	private static String metadataserverUrl;
+	private String value;
 
 	private static final String SELECT_CONNECTOR_LOGIN_USERNAME = Messages.SchemaKeyEditorDialog_SelectConnectorLoginUsername;
 	private static final String SELECT_CONNECTOR_LOGIN_PASSWORD = Messages.SchemaKeyEditorDialog_SelectConnectorLoginPassword;
@@ -114,6 +119,18 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		cmbSObjectType = new Combo(grpPropertyKey, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 
 		login = new Button(grpPropertyKey, SWT.PUSH);
+
+		if (LoginForm.userName != null && LoginForm.password != null && LoginForm.securityToken != null
+				&& LoginForm.loginUrl != null) {
+			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField
+					.setText(LoginForm.getInstance().getUserName());
+			GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField
+					.setText(LoginForm.getInstance().getPassword());
+			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField
+					.setText(LoginForm.getInstance().getSecurityToken());
+			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField
+					.setText(LoginForm.getInstance().getLoginURL());
+		}
 
 		FormData salesforceLoginUserNameLabelLayoutData = new FormData();
 		lblConnectorSalesforceLoginUserName.setText(SELECT_CONNECTOR_LOGIN_USERNAME);
@@ -177,8 +194,17 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		login.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					login();
-					String[] sObject = callMetaData();
+					LoginForm.getInstance().setUserName(
+							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField.getText());
+					LoginForm.getInstance().setPassword(
+							GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField.getText());
+					LoginForm.getInstance().setSecurityToken(
+							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField
+									.getText());
+					LoginForm.getInstance().setLoginURL(
+							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField.getText());
+					CallSalesforceOperations.getInstance().login();
+					String[] sObject = CallSalesforceOperations.callMetaData();
 					cmbSObjectType.setItems(sObject);
 					cmbSObjectType.select(0);
 				} catch (Exception e) {
@@ -225,98 +251,12 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		return container;
 	}
 
-	protected void login() throws Exception {
-		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-
-		String url = connectorLoginSalesforceLoginURLTextField.getText();
-
-		// Create a Soap Message
-		MessageFactory messageFactory = MessageFactory.newInstance();
-		SOAPMessage soapMessage = messageFactory.createMessage();
-		SOAPPart soapPart = soapMessage.getSOAPPart();
-
-		// This is the namespace URI.
-		String serverURI = "urn:partner.soap.sforce.com";
-
-		// SOAP Envelope
-		SOAPEnvelope envelope = soapPart.getEnvelope();
-		envelope.addNamespaceDeclaration("urn", serverURI);
-
-		// SOAP Body
-		SOAPBody buildSoapBody = envelope.getBody();
-		SOAPElement soapBodyElem = buildSoapBody.addChildElement("login", "urn");
-		SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("username", "urn");
-		soapBodyElem1.addTextNode(connectorLoginSalesforceUserNameTextField.getText());
-		SOAPElement soapBodyElem2 = soapBodyElem.addChildElement("password", "urn");
-		soapBodyElem2.addTextNode(connectorLoginSalesforcePasswordTextField.getText()
-				+ connectorLoginSalesforceSecurityTokenTextField.getText());
-
-		MimeHeaders headers = soapMessage.getMimeHeaders();
-		headers.addHeader("SOAPAction", serverURI + "login");
-		soapMessage.saveChanges();
-
-		// Request to soapResponse
-		SOAPMessage soapResponse = soapConnection.call(soapMessage, url);
-		soapConnection.close();
-		SOAPPart soapBody = soapResponse.getSOAPPart();
-
-		NodeList tagSession = soapBody.getElementsByTagName("sessionId");
-		sessionId = tagSession.item(0).getFirstChild().getNodeValue();
-		NodeList tagServerUrl = soapBody.getElementsByTagName("serverUrl");
-		serverUrl = tagServerUrl.item(0).getFirstChild().getNodeValue();
-		NodeList tagMetadataServerUrl = soapBody.getElementsByTagName("metadataServerUrl");
-		metadataserverUrl = tagMetadataServerUrl.item(0).getFirstChild().getNodeValue();
-	}
-
-	public static String[] callMetaData() throws Exception {
-		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
-		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
-
-		String url = metadataserverUrl;
-
-		MessageFactory messageFactory = MessageFactory.newInstance();
-		SOAPMessage soapMessage = messageFactory.createMessage();
-		SOAPPart soapPart = soapMessage.getSOAPPart();
-
-		String serverURI = "http://soap.sforce.com/2006/04/metadata";
-
-		// SOAP Envelope
-		SOAPEnvelope envelope = soapPart.getEnvelope();
-		envelope.addNamespaceDeclaration("met", serverURI);
-
-		// SOAP Header
-		SOAPHeader buildSoapHeader = envelope.getHeader();
-		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "met");
-		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "met");
-		soapHeaderElem1.addTextNode(sessionId);
-
-		// SOAP Body
-		SOAPBody buildSoapBody = envelope.getBody();
-		SOAPElement soapBodyElem = buildSoapBody.addChildElement("listMetadata", "met");
-		SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("queries", "met");
-		SOAPElement soapBodyElem2 = soapBodyElem1.addChildElement("type", "met");
-		soapBodyElem2.addTextNode("CustomObject");
-
-		MimeHeaders headers = soapMessage.getMimeHeaders();
-		headers.addHeader("SOAPAction", serverURI + "listMetadata");
-
-		soapMessage.saveChanges();
-
-		SOAPMessage soapResponse = soapConnection.call(soapMessage, url);
-		soapConnection.close();
-		SOAPPart soapBody = soapResponse.getSOAPPart();
-		DOMSource source = new DOMSource(soapBody);
-		StringWriter stringResult = new StringWriter();
-		TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(stringResult));
-		String response = stringResult.toString();
-
-		List<String> output = getTagValueFromXml(response, "fullName");
-		String[] strarray = new String[output.size()];
-
-		return output.toArray(strarray);
-	}
-
+	/**
+	 * Build the queryString from the user Input.
+	 * 
+	 * @return queryString.
+	 * @throws Exception
+	 */
 	public static String buildQuery() throws Exception {
 		String fields = callDescribeSObject();
 
@@ -324,11 +264,18 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		return query;
 	}
 
+	/**
+	 * Call the Salesforce SOAP api describeSobject method to retrieve All
+	 * fields of the particular sObject.
+	 * 
+	 * @return All Fields.
+	 * @throws Exception
+	 */
 	public static String callDescribeSObject() throws Exception {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = serverUrl;
+		String url = CallSalesforceOperations.getInstance().getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -344,7 +291,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(sessionId);
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -365,7 +312,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(stringResult));
 		String response = stringResult.toString();
 
-		List<String> output = getInnerTagFromXml(response, "fields");
+		List<String> output = GetTagValueFromXML.getInnerTagFromXml(response, "fields");
 		String[] out = output.toArray(new String[output.size()]);
 
 		if (out.length > 0) {
@@ -383,11 +330,18 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		}
 	}
 
+	/**
+	 * Call Query operation of Salesforce SOAP api to get the response to
+	 * generate the Schema.
+	 * 
+	 * @return response.
+	 * @throws Exception
+	 */
 	public String callQuery() throws Exception {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = serverUrl;
+		String url = CallSalesforceOperations.getInstance().getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -403,7 +357,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(sessionId);
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -427,44 +381,6 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		return response;
 	}
 
-	public static Document loadXML(String xml) throws Exception {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		InputSource insrc = new InputSource(new StringReader(xml));
-
-		return db.parse(insrc);
-	}
-
-	public static List<String> getTagValueFromXml(String xml, String tagName) throws Exception {
-		Document xmlDoc = loadXML(xml);
-		xmlDoc.getDocumentElement().normalize();
-
-		NodeList nodeList = xmlDoc.getElementsByTagName(tagName);
-		List<String> ids = new ArrayList<String>(nodeList.getLength());
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node x = nodeList.item(i);
-			ids.add(x.getFirstChild().getNodeValue());
-		}
-		return ids;
-	}
-
-	public static List<String> getInnerTagFromXml(String xml, String tagName) throws Exception {
-		Document xmlDoc = loadXML(xml);
-		xmlDoc.getDocumentElement().normalize();
-
-		NodeList nodeList = xmlDoc.getElementsByTagName(tagName);
-		List<String> ids = new ArrayList<String>(nodeList.getLength());
-
-		for (int temp = 0; temp < nodeList.getLength(); temp++) {
-			Node nNode = nodeList.item(temp);
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element eElement = (Element) nNode;
-				ids.add(eElement.getElementsByTagName("name").item(0).getTextContent());
-			}
-		}
-		return ids;
-	}
-
 	@Override
 	protected Point getInitialSize() {
 		return new Point(450, 550);
@@ -474,6 +390,14 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 	protected void okPressed() {
 
 		try {
+			LoginForm.getInstance().setUserName(
+					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField.getText());
+			LoginForm.getInstance().setPassword(
+					GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField.getText());
+			LoginForm.getInstance().setSecurityToken(
+					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField.getText());
+			LoginForm.getInstance().setLoginURL(
+					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField.getText());
 			value = callQuery();
 		} catch (Exception e) {
 			MessageDialog.openWarning(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
@@ -482,6 +406,11 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		super.okPressed();
 	}
 
+	/**
+	 * The value to generate the Schema from the parent dialog.
+	 * 
+	 * @return response.
+	 */
 	public String getResponse() {
 		return value;
 	}
