@@ -19,45 +19,39 @@ package org.wso2.tooling.connector.dynamic.schema.salesforcesoap;
 
 public class LoginForm {
 	public static String userName, password, loginUrl, securityToken;
-	
-	private static LoginForm loginForm = new LoginForm();
-	
-	private LoginForm(){
-	}
-	   
-	public static LoginForm getInstance() {
-		return loginForm;
+
+	private LoginForm() {
 	}
 
-	public String getUserName() {
+	public static String getUserName() {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
+	public static void setUserName(String userName) {
 		LoginForm.userName = userName;
 	}
 
-	public String getPassword() {
+	public static String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public static void setPassword(String password) {
 		LoginForm.password = password;
 	}
 
-	public String getLoginURL() {
+	public static String getLoginURL() {
 		return loginUrl;
 	}
 
-	public void setLoginURL(String loginUrl) {
+	public static void setLoginURL(String loginUrl) {
 		LoginForm.loginUrl = loginUrl;
 	}
 
-	public String getSecurityToken() {
+	public static String getSecurityToken() {
 		return securityToken;
 	}
 
-	public void setSecurityToken(String securityToken) {
+	public static void setSecurityToken(String securityToken) {
 		LoginForm.securityToken = securityToken;
 	}
 }

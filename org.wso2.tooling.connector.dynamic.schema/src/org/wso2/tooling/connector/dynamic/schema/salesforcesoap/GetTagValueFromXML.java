@@ -33,13 +33,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class GetTagValueFromXML {
-	private static GetTagValueFromXML getTagValueFromXML = new GetTagValueFromXML();
 
 	private GetTagValueFromXML() {
-	}
-
-	public static GetTagValueFromXML getInstance() {
-		return getTagValueFromXML;
 	}
 
 	/**

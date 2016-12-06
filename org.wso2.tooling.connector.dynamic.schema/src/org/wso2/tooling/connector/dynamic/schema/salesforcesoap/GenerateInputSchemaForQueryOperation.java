@@ -123,13 +123,13 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		if (LoginForm.userName != null && LoginForm.password != null && LoginForm.securityToken != null
 				&& LoginForm.loginUrl != null) {
 			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField
-					.setText(LoginForm.getInstance().getUserName());
+					.setText(LoginForm.getUserName());
 			GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField
-					.setText(LoginForm.getInstance().getPassword());
+					.setText(LoginForm.getPassword());
 			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField
-					.setText(LoginForm.getInstance().getSecurityToken());
+					.setText(LoginForm.getSecurityToken());
 			GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField
-					.setText(LoginForm.getInstance().getLoginURL());
+					.setText(LoginForm.getLoginURL());
 		}
 
 		FormData salesforceLoginUserNameLabelLayoutData = new FormData();
@@ -164,7 +164,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 
 		FormData salesforceLoginSecurityTokenTextFieldLayoutData = new FormData();
 		salesforceLoginSecurityTokenTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforcePasswordTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforcePasswordTextField, 12, SWT.BOTTOM);
 		salesforceLoginSecurityTokenTextFieldLayoutData.left = new FormAttachment(
 				lblConnectorLoginSalesforceSecurityToken, 10, SWT.RIGHT);
 		salesforceLoginSecurityTokenTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -178,7 +178,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 
 		FormData salesforceLoginLoginURLTextFieldLayoutData = new FormData();
 		salesforceLoginLoginURLTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforceSecurityTokenTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforceSecurityTokenTextField, 12, SWT.BOTTOM);
 		salesforceLoginLoginURLTextFieldLayoutData.left = new FormAttachment(lblConnectorLoginSalesforceLoginURL, 10,
 				SWT.RIGHT);
 		salesforceLoginLoginURLTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -194,16 +194,16 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		login.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					LoginForm.getInstance().setUserName(
+					LoginForm.setUserName(
 							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField.getText());
-					LoginForm.getInstance().setPassword(
+					LoginForm.setPassword(
 							GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField.getText());
-					LoginForm.getInstance().setSecurityToken(
+					LoginForm.setSecurityToken(
 							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField
 									.getText());
-					LoginForm.getInstance().setLoginURL(
+					LoginForm.setLoginURL(
 							GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField.getText());
-					CallSalesforceOperations.getInstance().login();
+					CallSalesforceOperations.login();
 					String[] sObject = CallSalesforceOperations.callMetaData();
 					cmbSObjectType.setItems(sObject);
 					cmbSObjectType.select(0);
@@ -275,7 +275,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -291,7 +291,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -341,7 +341,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -357,7 +357,7 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -390,13 +390,13 @@ public class GenerateInputSchemaForQueryOperation extends Dialog {
 	protected void okPressed() {
 
 		try {
-			LoginForm.getInstance().setUserName(
+			LoginForm.setUserName(
 					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceUserNameTextField.getText());
-			LoginForm.getInstance().setPassword(
+			LoginForm.setPassword(
 					GenerateInputSchemaForQueryOperation.connectorLoginSalesforcePasswordTextField.getText());
-			LoginForm.getInstance().setSecurityToken(
+			LoginForm.setSecurityToken(
 					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceSecurityTokenTextField.getText());
-			LoginForm.getInstance().setLoginURL(
+			LoginForm.setLoginURL(
 					GenerateInputSchemaForQueryOperation.connectorLoginSalesforceLoginURLTextField.getText());
 			value = callQuery();
 		} catch (Exception e) {

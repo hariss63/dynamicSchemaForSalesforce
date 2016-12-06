@@ -41,17 +41,14 @@ public class CallSalesforceOperations {
 	private static String sessionId;
 	private static String metadataserverUrl;
 
-	private static CallSalesforceOperations callSalesforce = new CallSalesforceOperations();
-
-	public static CallSalesforceOperations getInstance() {
-		return callSalesforce;
+	private CallSalesforceOperations() {
 	}
 
-	public String getServerURL() {
+	public static String getServerURL() {
 		return serverUrl;
 	}
 
-	public String getSessionId() {
+	public static String getSessionId() {
 		return sessionId;
 	}
 
@@ -60,11 +57,11 @@ public class CallSalesforceOperations {
 	 * 
 	 * @throws Exception
 	 */
-	protected void login() throws Exception {
+	protected static void login() throws Exception {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = LoginForm.getInstance().getLoginURL();
+		String url = LoginForm.getLoginURL();
 
 		// Create a Soap Message
 		MessageFactory messageFactory = MessageFactory.newInstance();
@@ -82,9 +79,9 @@ public class CallSalesforceOperations {
 		SOAPBody buildSoapBody = envelope.getBody();
 		SOAPElement soapBodyElem = buildSoapBody.addChildElement("login", "urn");
 		SOAPElement soapBodyElem1 = soapBodyElem.addChildElement("username", "urn");
-		soapBodyElem1.addTextNode(LoginForm.getInstance().getUserName());
+		soapBodyElem1.addTextNode(LoginForm.getUserName());
 		SOAPElement soapBodyElem2 = soapBodyElem.addChildElement("password", "urn");
-		soapBodyElem2.addTextNode(LoginForm.getInstance().getPassword() + LoginForm.getInstance().getSecurityToken());
+		soapBodyElem2.addTextNode(LoginForm.getPassword() + LoginForm.getSecurityToken());
 
 		MimeHeaders headers = soapMessage.getMimeHeaders();
 		headers.addHeader("SOAPAction", serverURI + "login");

@@ -125,13 +125,13 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		if (LoginForm.userName != null && LoginForm.password != null && LoginForm.securityToken != null
 				&& LoginForm.loginUrl != null) {
 			GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceUserNameTextField
-					.setText(LoginForm.getInstance().getUserName());
+					.setText(LoginForm.getUserName());
 			GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforcePasswordTextField
-					.setText(LoginForm.getInstance().getPassword());
+					.setText(LoginForm.getPassword());
 			GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceSecurityTokenTextField
-					.setText(LoginForm.getInstance().getSecurityToken());
+					.setText(LoginForm.getSecurityToken());
 			GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceLoginURLTextField
-					.setText(LoginForm.getInstance().getLoginURL());
+					.setText(LoginForm.getLoginURL());
 		}
 
 		FormData salesforceLoginUserNameLabelLayoutData = new FormData();
@@ -166,7 +166,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 
 		FormData salesforceLoginSecurityTokenTextFieldLayoutData = new FormData();
 		salesforceLoginSecurityTokenTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforcePasswordTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforcePasswordTextField, 12, SWT.BOTTOM);
 		salesforceLoginSecurityTokenTextFieldLayoutData.left = new FormAttachment(
 				lblConnectorLoginSalesforceSecurityToken, 10, SWT.RIGHT);
 		salesforceLoginSecurityTokenTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -180,7 +180,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 
 		FormData salesforceLoginLoginURLTextFieldLayoutData = new FormData();
 		salesforceLoginLoginURLTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforceSecurityTokenTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforceSecurityTokenTextField, 12, SWT.BOTTOM);
 		salesforceLoginLoginURLTextFieldLayoutData.left = new FormAttachment(lblConnectorLoginSalesforceLoginURL, 10,
 				SWT.RIGHT);
 		salesforceLoginLoginURLTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -196,19 +196,19 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		login.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					LoginForm.getInstance().setUserName(
+					LoginForm.setUserName(
 							GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceUserNameTextField
 									.getText());
-					LoginForm.getInstance().setPassword(
+					LoginForm.setPassword(
 							GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforcePasswordTextField
 									.getText());
-					LoginForm.getInstance().setSecurityToken(
+					LoginForm.setSecurityToken(
 							GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceSecurityTokenTextField
 									.getText());
-					LoginForm.getInstance().setLoginURL(
+					LoginForm.setLoginURL(
 							GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceLoginURLTextField
 									.getText());
-					CallSalesforceOperations.getInstance().login();
+					CallSalesforceOperations.login();
 					String[] sObject = CallSalesforceOperations.callMetaData();
 					cmbSObjectType.setItems(sObject);
 					cmbSObjectType.select(0);
@@ -267,7 +267,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -283,7 +283,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -333,7 +333,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -349,7 +349,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -383,7 +383,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -399,7 +399,7 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -436,13 +436,13 @@ public class GenerateInputSchemaForRetrieveOperation extends Dialog {
 	protected void okPressed() {
 
 		try {
-			LoginForm.getInstance().setUserName(
+			LoginForm.setUserName(
 					GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceUserNameTextField.getText());
-			LoginForm.getInstance().setPassword(
+			LoginForm.setPassword(
 					GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforcePasswordTextField.getText());
-			LoginForm.getInstance().setSecurityToken(
+			LoginForm.setSecurityToken(
 					GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceSecurityTokenTextField.getText());
-			LoginForm.getInstance().setLoginURL(
+			LoginForm.setLoginURL(
 					GenerateInputSchemaForRetrieveOperation.connectorLoginSalesforceLoginURLTextField.getText());
 			value = callRetrieve();
 		} catch (Exception e) {

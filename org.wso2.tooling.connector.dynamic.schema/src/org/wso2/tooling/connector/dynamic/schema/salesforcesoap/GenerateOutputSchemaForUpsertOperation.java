@@ -118,13 +118,13 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 		if (LoginForm.userName != null && LoginForm.password != null && LoginForm.securityToken != null
 				&& LoginForm.loginUrl != null) {
 			GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceUserNameTextField
-					.setText(LoginForm.getInstance().getUserName());
+					.setText(LoginForm.getUserName());
 			GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforcePasswordTextField
-					.setText(LoginForm.getInstance().getPassword());
+					.setText(LoginForm.getPassword());
 			GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceSecurityTokenTextField
-					.setText(LoginForm.getInstance().getSecurityToken());
+					.setText(LoginForm.getSecurityToken());
 			GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceLoginURLTextField
-					.setText(LoginForm.getInstance().getLoginURL());
+					.setText(LoginForm.getLoginURL());
 		}
 
 		FormData salesforceLoginUserNameLabelLayoutData = new FormData();
@@ -159,7 +159,7 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 
 		FormData salesforceLoginSecurityTokenTextFieldLayoutData = new FormData();
 		salesforceLoginSecurityTokenTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforcePasswordTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforcePasswordTextField, 12, SWT.BOTTOM);
 		salesforceLoginSecurityTokenTextFieldLayoutData.left = new FormAttachment(
 				lblConnectorLoginSalesforceSecurityToken, 10, SWT.RIGHT);
 		salesforceLoginSecurityTokenTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -173,7 +173,7 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 
 		FormData salesforceLoginLoginURLTextFieldLayoutData = new FormData();
 		salesforceLoginLoginURLTextFieldLayoutData.top = new FormAttachment(
-				connectorLoginSalesforceSecurityTokenTextField, 10, SWT.BOTTOM);
+				connectorLoginSalesforceSecurityTokenTextField, 12, SWT.BOTTOM);
 		salesforceLoginLoginURLTextFieldLayoutData.left = new FormAttachment(lblConnectorLoginSalesforceLoginURL, 10,
 				SWT.RIGHT);
 		salesforceLoginLoginURLTextFieldLayoutData.right = new FormAttachment(100, -5);
@@ -189,16 +189,16 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 		login.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					LoginForm.getInstance().setUserName(
+					LoginForm.setUserName(
 							GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceUserNameTextField.getText());
-					LoginForm.getInstance().setPassword(
+					LoginForm.setPassword(
 							GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforcePasswordTextField.getText());
-					LoginForm.getInstance().setSecurityToken(
+					LoginForm.setSecurityToken(
 							GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceSecurityTokenTextField
 									.getText());
-					LoginForm.getInstance().setLoginURL(
+					LoginForm.setLoginURL(
 							GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceLoginURLTextField.getText());
-					CallSalesforceOperations.getInstance().login();
+					CallSalesforceOperations.login();
 					String[] sObject = CallSalesforceOperations.callMetaData();
 					cmbSObjectType.setItems(sObject);
 					cmbSObjectType.select(0);
@@ -247,7 +247,7 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 		SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
 		SOAPConnection soapConnection = soapConnectionFactory.createConnection();
 
-		String url = CallSalesforceOperations.getInstance().getServerURL();
+		String url = CallSalesforceOperations.getServerURL();
 
 		MessageFactory messageFactory = MessageFactory.newInstance();
 		SOAPMessage soapMessage = messageFactory.createMessage();
@@ -263,7 +263,7 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 		SOAPHeader buildSoapHeader = envelope.getHeader();
 		SOAPElement soapHeaderElem = buildSoapHeader.addChildElement("SessionHeader", "urn");
 		SOAPElement soapHeaderElem1 = soapHeaderElem.addChildElement("sessionId", "urn");
-		soapHeaderElem1.addTextNode(CallSalesforceOperations.getInstance().getSessionId());
+		soapHeaderElem1.addTextNode(CallSalesforceOperations.getSessionId());
 
 		// SOAP Body
 		SOAPBody buildSoapBody = envelope.getBody();
@@ -339,13 +339,13 @@ public class GenerateOutputSchemaForUpsertOperation extends Dialog {
 	protected void okPressed() {
 
 		try {
-			LoginForm.getInstance().setUserName(
+			LoginForm.setUserName(
 					GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceUserNameTextField.getText());
-			LoginForm.getInstance().setPassword(
+			LoginForm.setPassword(
 					GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforcePasswordTextField.getText());
-			LoginForm.getInstance().setSecurityToken(
+			LoginForm.setSecurityToken(
 					GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceSecurityTokenTextField.getText());
-			LoginForm.getInstance().setLoginURL(
+			LoginForm.setLoginURL(
 					GenerateOutputSchemaForUpsertOperation.connectorLoginSalesforceLoginURLTextField.getText());
 			value = buildRequestForUpsert();
 		} catch (Exception e) {
